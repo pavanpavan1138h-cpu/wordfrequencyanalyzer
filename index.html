@@ -1,41 +1,426 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark">
 <head>
-    <title>Word Frequency</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Word Frequency Analyzer — Compare Naive, Hashing & Dictionary algorithms with interactive visualizations.">
+    <title>Word Frequency Analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<h2>Word Frequency Graph</h2>
-<canvas id="chart"></canvas>
+    <!-- ───── ANIMATED BACKGROUND ───── -->
+    <div class="bg-animated" id="bg-animated">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+        <div class="bg-orb bg-orb-4"></div>
+        <div class="bg-grid"></div>
+        <canvas id="particles-canvas"></canvas>
+    </div>
 
-<script>
-fetch('output/data.txt')
-.then(response => response.text())
-.then(data => {
-    let lines = data.trim().split("\n");
+    <!-- ───── HEADER ───── -->
+    <header id="app-header">
+        <div class="header-inner">
+            <div class="logo" id="logo">
+                <div class="logo-icon">
+                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+                        <rect x="2" y="19" width="5" height="9" rx="2" fill="url(#b1)"/>
+                        <rect x="9" y="13" width="5" height="15" rx="2" fill="url(#b2)"/>
+                        <rect x="16" y="7" width="5" height="21" rx="2" fill="url(#b3)"/>
+                        <rect x="23" y="2" width="5" height="26" rx="2" fill="url(#b4)"/>
+                        <defs>
+                            <linearGradient id="b1" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#818cf8"/></linearGradient>
+                            <linearGradient id="b2" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#818cf8"/><stop offset="1" stop-color="#a5b4fc"/></linearGradient>
+                            <linearGradient id="b3" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a78bfa"/><stop offset="1" stop-color="#c084fc"/></linearGradient>
+                            <linearGradient id="b4" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c084fc"/><stop offset="1" stop-color="#e879f9"/></linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="logo-text">WordFreq<span class="logo-accent">Analyzer</span></span>
+            </div>
 
-    let words = [];
-    let counts = [];
+            <nav class="header-actions">
+                <div class="nav-menu" id="desktop-nav">
+                    <a class="nav-link active" data-page="page-home">Home</a>
+                    <a class="nav-link" data-page="page-input">Analyzer</a>
+                    <a class="nav-link" data-page="page-about">About</a>
+                </div>
+                <button id="btn-back-to-input" class="btn btn-ghost hidden" title="Back to input">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    New Analysis
+                </button>
+                <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme" title="Toggle dark / light mode">
+                    <svg class="icon sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="icon moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+                <button id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Toggle menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+            </nav>
+        </div>
+    </header>
 
-    lines.forEach(line => {
-        let [word, count] = line.split(",");
-        words.push(word);
-        counts.push(parseInt(count));
-    });
+    <!-- ───── MOBILE MENU OVERLAY ───── -->
+    <div class="mobile-overlay" id="mobile-overlay">
+        <a class="nav-link active" data-page="page-home">Home</a>
+        <a class="nav-link" data-page="page-input">Analyzer</a>
+        <a class="nav-link" data-page="page-about">About Us</a>
+    </div>
 
-    new Chart(document.getElementById("chart"), {
-        type: 'bar',
-        data: {
-            labels: words,
-            datasets: [{
-                label: 'Frequency',
-                data: counts
-            }]
-        }
-    });
-});
-</script>
+    <!-- ═══════════════════════════════════════════════════
+         PAGE 0 — HOME PAGE
+         ═══════════════════════════════════════════════════ -->
+    <main id="page-home" class="page page-active">
+        <div class="hero-content">
+            <h1>Word Frequency <span class="gradient-text">Analyzer</span></h1>
+            <p>A Data Structures &amp; Algorithms project demonstrating the power of Naive, Hashing, and Dictionary methods for extreme-scale text processing.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary btn-nav" data-page="page-input">Get Started</button>
+                <button class="btn btn-ghost btn-nav" data-page="page-about">Learn More</button>
+            </div>
+        </div>
+    </main>
 
+    <!-- ═══════════════════════════════════════════════════
+         PAGE 1 — INPUT PAGE
+         ═══════════════════════════════════════════════════ -->
+    <main id="page-input" class="page">
+        <div class="page-center">
+            <!-- Hero -->
+            <div class="input-hero">
+                <div class="input-hero-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    Data Structures &amp; Algorithms Project
+                </div>
+                <h1 class="input-title">Word Frequency <span class="gradient-text">Analyzer</span></h1>
+                <p class="input-subtitle">Compare <strong>Naive</strong>, <strong>Hashing</strong> &amp; <strong>Dictionary</strong> methods for counting word frequencies. Upload a text file or paste content directly.</p>
+            </div>
+
+            <!-- Input card -->
+            <div class="input-card" id="input-card">
+                <!-- Tab selector -->
+                <div class="input-tabs">
+                    <button class="input-tab active" data-tab="upload" id="tab-upload">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Upload File
+                    </button>
+                    <button class="input-tab" data-tab="paste" id="tab-paste">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                        Paste Text
+                    </button>
+                    <div class="input-tab-slider" id="input-tab-slider"></div>
+                </div>
+
+                <!-- Upload panel -->
+                <div class="input-panel active" id="panel-upload">
+                    <div class="drop-zone" id="drop-zone">
+                        <div class="drop-zone-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10 9 9 9 8 9"/>
+                            </svg>
+                        </div>
+                        <p class="drop-zone-text">Drag &amp; drop your <strong>.txt</strong> file here</p>
+                        <p class="drop-zone-hint">or click to browse</p>
+                        <input type="file" id="file-upload" accept=".txt,.csv,.text" hidden>
+                    </div>
+                    <div class="file-info hidden" id="file-info">
+                        <div class="file-info-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div class="file-info-details">
+                            <span class="file-info-name" id="file-info-name">—</span>
+                            <span class="file-info-size" id="file-info-size">—</span>
+                        </div>
+                        <button class="file-info-remove" id="file-info-remove" title="Remove file">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                    <p class="input-format-hint">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        Supports plain text files. Each word will be extracted and counted. Large files (100MB+) are supported.
+                    </p>
+                </div>
+
+                <!-- Paste panel -->
+                <div class="input-panel" id="panel-paste">
+                    <div class="textarea-wrap">
+                        <textarea id="text-input" placeholder="Paste or type your text here…&#10;&#10;Example: apple banana apple mango banana apple cherry grape&#10;&#10;Each word will be extracted and its frequency counted." rows="10"></textarea>
+                        <span class="char-count" id="char-count">0 characters</span>
+                    </div>
+                </div>
+
+                <!-- Data format selector -->
+                <div class="format-selector">
+                    <label class="format-label">Input format:</label>
+                    <div class="format-options">
+                        <label class="format-option">
+                            <input type="radio" name="format" value="raw" checked>
+                            <span class="format-chip">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                                Raw Text
+                            </span>
+                        </label>
+                        <label class="format-option">
+                            <input type="radio" name="format" value="csv">
+                            <span class="format-chip">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                                CSV (word,count)
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Analyze button -->
+                <button class="btn btn-analyze" id="btn-analyze" disabled>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    Analyze Frequencies
+                    <div class="btn-shine"></div>
+                </button>
+            </div>
+
+            <!-- Feature chips -->
+            <div class="feature-chips">
+                <div class="feature-chip">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    Interactive Charts
+                </div>
+                <div class="feature-chip">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    3 Algorithms
+                </div>
+                <div class="feature-chip">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Large File Support
+                </div>
+                <div class="feature-chip">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Search &amp; Filter
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- ═══════════════════════════════════════════════════
+         PAGE 2 — DASHBOARD
+         ═══════════════════════════════════════════════════ -->
+    <main id="page-dashboard" class="page">
+        <div class="dashboard-wrap">
+
+            <!-- Processing overlay -->
+            <div class="processing-overlay hidden" id="processing-overlay">
+                <div class="processing-card">
+                    <div class="spinner"></div>
+                    <h3>Processing your data…</h3>
+                    <p id="processing-status">Running Naive algorithm…</p>
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats cards -->
+            <section class="stats-row" id="stats-section">
+                <div class="stat-card" id="stat-total-words">
+                    <div class="stat-icon stat-icon-purple">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="val-total-words">0</span>
+                        <span class="stat-label">Total Words</span>
+                    </div>
+                </div>
+                <div class="stat-card" id="stat-unique-words">
+                    <div class="stat-icon stat-icon-blue">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="val-unique-words">0</span>
+                        <span class="stat-label">Unique Words</span>
+                    </div>
+                </div>
+                <div class="stat-card" id="stat-top-word">
+                    <div class="stat-icon stat-icon-emerald">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="val-top-word">—</span>
+                        <span class="stat-label">Most Frequent</span>
+                    </div>
+                </div>
+                <div class="stat-card" id="stat-exec-time">
+                    <div class="stat-icon stat-icon-amber">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="val-exec-time">—</span>
+                        <span class="stat-label">Execution Time</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Method toggle (3 buttons) -->
+            <section class="method-section" id="method-section">
+                <div class="method-bar">
+                    <span class="method-bar-label">Algorithm:</span>
+                    <div class="method-toggle-3">
+                        <button class="method-btn-3 active" data-method="naive" id="btn-naive">
+                            <span class="method-dot naive-dot"></span>
+                            Naive
+                        </button>
+                        <button class="method-btn-3" data-method="hashing" id="btn-hashing">
+                            <span class="method-dot hashing-dot"></span>
+                            Hashing
+                        </button>
+                        <button class="method-btn-3" data-method="dictionary" id="btn-dictionary">
+                            <span class="method-dot dict-dot"></span>
+                            Dictionary
+                        </button>
+                        <div class="method-slider-3" id="method-slider"></div>
+                    </div>
+                    <!-- Search -->
+                    <div class="search-wrap" id="search-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="search-input" placeholder="Search word…" autocomplete="off">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts grid -->
+            <section class="charts-grid" id="charts-section">
+                <div class="card card-chart" id="bar-chart-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Frequency Distribution</h2>
+                        <span class="badge" id="badge-method-bar">Naive</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+                <div class="card card-chart" id="pie-chart-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Word Share</h2>
+                        <span class="badge" id="badge-method-pie">Naive</span>
+                    </div>
+                    <div class="chart-container chart-container-pie">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Top 5 highlight -->
+            <section class="top5-section" id="top5-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            Top 5 Most Frequent Words
+                        </h2>
+                    </div>
+                    <div class="top5-grid" id="top5-grid"></div>
+                </div>
+            </section>
+
+            <!-- Data table -->
+            <section class="table-section" id="table-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Complete Frequency Table</h2>
+                        <span class="badge" id="badge-method-table">Naive</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table id="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Word</th>
+                                    <th>Frequency</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                        <div class="table-empty" id="table-empty">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <p>No data loaded.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Algorithm comparison -->
+            <section class="algo-section" id="algo-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Algorithm Comparison</h2>
+                    </div>
+                    <div class="algo-grid">
+                        <div class="algo-card algo-active" id="algo-naive-card">
+                            <div class="algo-badge naive">Naive O(n²)</div>
+                            <h3>Naive Method</h3>
+                            <p>Uses nested loops to compare every word against every other word. Simple but slow for large datasets.</p>
+                            <div class="algo-meta">
+                                <span><strong>Time:</strong> O(n²)</span>
+                                <span><strong>Space:</strong> O(n)</span>
+                            </div>
+                            <div class="algo-time" id="algo-naive-time">—</div>
+                        </div>
+                        <div class="algo-card" id="algo-hashing-card">
+                            <div class="algo-badge hashing">Hashing O(n)</div>
+                            <h3>Hashing Method</h3>
+                            <p>Uses a hash table with chaining for collisions. Near-constant time per operation on average.</p>
+                            <div class="algo-meta">
+                                <span><strong>Time:</strong> O(n) avg</span>
+                                <span><strong>Space:</strong> O(n)</span>
+                            </div>
+                            <div class="algo-time" id="algo-hashing-time">—</div>
+                        </div>
+                        <div class="algo-card" id="algo-dict-card">
+                            <div class="algo-badge dict">Dictionary O(n)</div>
+                            <h3>Dictionary Method</h3>
+                            <p>Uses a key-value dictionary (associative array). Direct key lookup for O(1) average insert and search.</p>
+                            <div class="algo-meta">
+                                <span><strong>Time:</strong> O(n) avg</span>
+                                <span><strong>Space:</strong> O(k)</span>
+                            </div>
+                            <div class="algo-time" id="algo-dict-time">—</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════
+         PAGE ABOUT — ABOUT US
+         ═══════════════════════════════════════════════════ -->
+    <main id="page-about" class="page">
+        <div class="about-card">
+            <h2>About Us</h2>
+            <p>Welcome to the Word Frequency Analyzer project.</p>
+            <p>This web application was developed to practically demonstrate and compare the time complexities of various data structures and algorithms when processing large datasets.</p>
+            <p>By comparing the <strong>O(n²) Naive</strong> approach, the <strong>O(n) Hashing</strong> technique with chaining, and the <strong>O(1) Dictionary</strong> structure, we aim to provide an interactive educational tool for understanding algorithm performance at scale.</p>
+        </div>
+    </main>
+
+    <!-- ───── FOOTER ───── -->
+    <footer id="app-footer">
+        <div class="footer-inner">
+            <p>&copy; 2026 Word Frequency Analyzer &mdash; Data Structures &amp; Algorithms Project</p>
+            <p class="footer-sub">Built with HTML, CSS, JavaScript &amp; Chart.js</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
 </body>
 </html>
