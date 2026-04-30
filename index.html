@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Word Frequency</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h2>Word Frequency Graph</h2>
+<canvas id="chart"></canvas>
+
+<script>
+fetch('output/data.txt')
+.then(response => response.text())
+.then(data => {
+    let lines = data.trim().split("\n");
+
+    let words = [];
+    let counts = [];
+
+    lines.forEach(line => {
+        let [word, count] = line.split(",");
+        words.push(word);
+        counts.push(parseInt(count));
+    });
+
+    new Chart(document.getElementById("chart"), {
+        type: 'bar',
+        data: {
+            labels: words,
+            datasets: [{
+                label: 'Frequency',
+                data: counts
+            }]
+        }
+    });
+});
+</script>
+
+</body>
+</html>
