@@ -1,0 +1,22 @@
+# Compiled C binaries
+naive
+hashing
+
+# C source and build
+src/
+include/
+Makefile
+
+# Input/output test data
+input/
+output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Vercel local
+.vercel/

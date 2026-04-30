@@ -1,0 +1,11 @@
+# Ignore C source, binaries, and non-web files for Vercel deployment
+src/
+include/
+input/
+output/
+Makefile
+naive
+hashing
+.git/
+.gitignore
+README.md

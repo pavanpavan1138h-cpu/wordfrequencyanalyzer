@@ -406,10 +406,39 @@
          ═══════════════════════════════════════════════════ -->
     <main id="page-about" class="page">
         <div class="about-card">
-            <h2>About Us</h2>
-            <p>Welcome to the Word Frequency Analyzer project.</p>
-            <p>This web application was developed to practically demonstrate and compare the time complexities of various data structures and algorithms when processing large datasets.</p>
-            <p>By comparing the <strong>O(n²) Naive</strong> approach, the <strong>O(n) Hashing</strong> technique with chaining, and the <strong>O(1) Dictionary</strong> structure, we aim to provide an interactive educational tool for understanding algorithm performance at scale.</p>
+            <h2>About <span class="gradient-text">This Project</span></h2>
+
+            <p>The <strong>Word Frequency Analyzer</strong> is a Data Structures &amp; Algorithms (DSA) project built to demonstrate how different algorithmic approaches handle the same real-world task — counting word frequencies in large text datasets.</p>
+
+            <p>In any text-processing pipeline, counting word occurrences is a fundamental operation. The efficiency of this task varies drastically depending on the data structure used. This project provides a side-by-side comparison to make that difference visible and tangible.</p>
+
+            <h3 style="margin-top:32px; margin-bottom:16px; font-size:1.3rem; color:var(--text-primary);">🔬 Algorithms Compared</h3>
+
+            <p><strong>1. Naive Method — O(n²)</strong><br>
+            Uses nested loops to iterate through every word and compare it against all previously seen words. While conceptually simple, it becomes extremely slow as the input size grows. This method is implemented in C using basic arrays and linear search.</p>
+
+            <p><strong>2. Hashing Method — O(n) average</strong><br>
+            Employs a hash table with separate chaining for collision resolution. Each word is hashed to an index, and collisions are handled via linked lists. This provides near-constant time insertion and lookup on average, making it dramatically faster than the naive approach. Also implemented in C.</p>
+
+            <p><strong>3. Dictionary Method — O(n) average</strong><br>
+            Uses a key-value associative array (similar to Python's dict or JavaScript's Map). Each word maps directly to its count, allowing O(1) average-case insert and search. The web interface uses JavaScript's native <code style="background:var(--bg-input);padding:2px 8px;border-radius:6px;font-family:var(--font-mono);font-size:0.9rem;">Map</code> object with stream processing to handle files exceeding 100MB without crashing.</p>
+
+            <h3 style="margin-top:32px; margin-bottom:16px; font-size:1.3rem; color:var(--text-primary);">🛠️ Tech Stack</h3>
+
+            <p>
+                <strong>Frontend:</strong> HTML5, CSS3 (custom properties, glassmorphism, responsive grid), Vanilla JavaScript<br>
+                <strong>Visualization:</strong> Chart.js for interactive bar and doughnut charts<br>
+                <strong>Backend Logic:</strong> C programs for naive and hashing algorithms (compiled locally)<br>
+                <strong>Streaming:</strong> File API with <code style="background:var(--bg-input);padding:2px 8px;border-radius:6px;font-family:var(--font-mono);font-size:0.9rem;">Blob.stream()</code> and <code style="background:var(--bg-input);padding:2px 8px;border-radius:6px;font-family:var(--font-mono);font-size:0.9rem;">TextDecoder</code> for chunk-by-chunk processing of large files
+            </p>
+
+            <h3 style="margin-top:32px; margin-bottom:16px; font-size:1.3rem; color:var(--text-primary);">📖 How It Works</h3>
+
+            <p>Upload any <code style="background:var(--bg-input);padding:2px 8px;border-radius:6px;font-family:var(--font-mono);font-size:0.9rem;">.txt</code> or <code style="background:var(--bg-input);padding:2px 8px;border-radius:6px;font-family:var(--font-mono);font-size:0.9rem;">.csv</code> file, or paste raw text directly into the input box. The app will parse every word, count its frequency, and display the results as interactive charts, a ranked table, and a top-5 highlight grid. You can toggle between the three algorithms to compare their simulated execution times and understand the impact of choosing the right data structure.</p>
+
+            <p style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-muted);font-size:0.95rem;">
+                Built as a 4th Semester Engineering Lab project for Data Structures &amp; Algorithms.
+            </p>
         </div>
     </main>
 
