@@ -527,6 +527,105 @@ body {
     line-height: 1.7;
 }
 
+/* Acknowledgements Section */
+.acknowledgements-section {
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s ease-out 0.1s both;
+}
+
+.ack-banner {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 32px 40px;
+    text-align: center;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+}
+
+.ack-banner h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.ack-banner p {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.team-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 32px 40px;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition);
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-md);
+}
+
+.team-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+}
+
+.team-card h4 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.team-list {
+    list-style: none;
+    margin-bottom: 24px;
+}
+
+.team-list li {
+    font-size: 1.05rem;
+    color: var(--text-primary);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.team-list li:last-child {
+    border-bottom: none;
+}
+
+.dept-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.dept-sub {
+    font-weight: 400;
+}
+
+@media (max-width: 768px) {
+    .team-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .postcards-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
