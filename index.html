@@ -78,12 +78,46 @@
     <main id="page-home" class="page page-active">
         <div class="hero-content">
             <h1>Word Frequency <span class="gradient-text">Analyzer</span></h1>
-            <p>A Design Analysis and &amp; Algorithms project demonstrating the power of Naive, Hashing, and Dictionary methods for extreme-scale text processing.</p>
+            <p>A Design Analysis &amp; Algorithms project demonstrating the power of Naive, Hashing, and Dictionary methods for extreme-scale text processing.</p>
             <div class="hero-buttons">
                 <button class="btn btn-primary btn-nav" data-page="page-input">Get Started</button>
                 <button class="btn btn-ghost btn-nav" data-page="page-about">Learn More</button>
             </div>
         </div>
+
+        <section class="roadmap-section">
+            <h2 class="roadmap-title">Execution Roadmap</h2>
+            <div class="roadmap-container">
+                <div class="roadmap-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Input Data</h3>
+                        <p>Upload a massive text file or paste directly into the interface.</p>
+                    </div>
+                </div>
+                <div class="roadmap-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Select Algorithm</h3>
+                        <p>Choose between Naive (O(n²)), Hashing (O(n)), or Dictionary methods.</p>
+                    </div>
+                </div>
+                <div class="roadmap-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Analyze &amp; Extract</h3>
+                        <p>The engine parses every word, resolving collisions and counting frequencies.</p>
+                    </div>
+                </div>
+                <div class="roadmap-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Visualize Results</h3>
+                        <p>Interact with real-time charts, ranked tables, and deep analytical insights.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- ═══════════════════════════════════════════════════
@@ -95,7 +129,7 @@
             <div class="input-hero">
                 <div class="input-hero-badge">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    Data Structures &amp; Algorithms Project
+                    Design Analysis &amp; Algorithms Project
                 </div>
                 <h1 class="input-title">Word Frequency <span class="gradient-text">Analyzer</span></h1>
                 <p class="input-subtitle">Compare <strong>Naive</strong>, <strong>Hashing</strong> &amp; <strong>Dictionary</strong> methods for counting word frequencies. Upload a text file or paste content directly.</p>
@@ -405,47 +439,51 @@
          PAGE ABOUT — ABOUT US
          ═══════════════════════════════════════════════════ -->
     <main id="page-about" class="page">
-        <div class="about-card">
-            <h2>About <span class="gradient-text">This Project</span></h2>
+        <div class="about-container">
+            <div class="about-header">
+                <h2>About <span class="gradient-text">This Project</span></h2>
+                <p class="about-subtitle">The <strong>Word Frequency Analyzer</strong> is a Design Analysis &amp; Algorithms (DAA) project built to demonstrate how different algorithmic approaches handle the same real-world task.</p>
+            </div>
 
-            <p>The <strong>Word Frequency Analyzer</strong> is a Data Structures &amp; Algorithms (DSA) project built to demonstrate how different algorithmic approaches handle the same real-world task — counting word frequencies in large text datasets.</p>
+            <div class="postcards-grid">
+                <div class="postcard">
+                    <div class="postcard-icon">🐢</div>
+                    <h3>1. Naive Method</h3>
+                    <div class="postcard-badge">Time: O(n²)</div>
+                    <p>Uses nested loops to iterate through every word and compare it against all previously seen words. Conceptually simple, but becomes extremely slow as input size grows.</p>
+                </div>
 
-            <p>In any text-processing pipeline, counting word occurrences is a fundamental operation. The efficiency of this task varies drastically depending on the data structure used. This project provides a side-by-side comparison to make that difference visible and tangible.</p>
+                <div class="postcard">
+                    <div class="postcard-icon">⚡</div>
+                    <h3>2. Hashing Method</h3>
+                    <div class="postcard-badge">Time: O(n) avg</div>
+                    <p>Employs a hash table with separate chaining for collision resolution. Words are hashed to indices, allowing near-constant time insertion and lookup.</p>
+                </div>
 
-            <h3 style="margin-top:32px; margin-bottom:16px; font-size:1.3rem; color:var(--text-primary);">🔬 Algorithms Compared</h3>
+                <div class="postcard">
+                    <div class="postcard-icon">📖</div>
+                    <h3>3. Dictionary Method</h3>
+                    <div class="postcard-badge">Time: O(n) avg</div>
+                    <p>Uses a key-value associative array mapping words directly to counts. It achieves O(1) average-case lookups using JavaScript's native Map object.</p>
+                </div>
 
-            <p><strong>1. Naive Method — O(n²)</strong><br>
-            Uses nested loops to iterate through every word and compare it against all previously seen words. While conceptually simple, it becomes extremely slow as the input size grows. This method is implemented in C using basic arrays and linear search.</p>
+                <div class="postcard postcard-wide">
+                    <div class="postcard-icon">🛠️</div>
+                    <div class="postcard-content">
+                        <h3>Tech Stack &amp; Processing</h3>
+                        <p>Built with <strong>HTML5, CSS3, and Vanilla JS</strong>. Uses <strong>Chart.js</strong> for visualizations and the native <strong>File API &amp; Streams</strong> for chunk-by-chunk processing to effortlessly handle files exceeding 100MB.</p>
+                    </div>
+                </div>
+            </div>
 
-            <p><strong>2. Hashing Method — O(n) average</strong><br>
-            Employs a hash table with separate chaining for collision resolution. Each word is hashed to an index, and collisions are handled via linked lists. This provides near-constant time insertion and lookup on average, making it dramatically faster than the naive approach. Also implemented in C.</p>
-
-            <p><strong>3. Dictionary Method — O(n) average</strong><br>
-            Uses a key-value associative array (similar to Python's dict or JavaScript's Map). Each word maps directly to its count, allowing O(1) average-case insert and search. The web interface uses JavaScript's native <code style="background:var(--bg-input);padding:2px 8px;border-radius:6px;font-family:var(--font-mono);font-size:0.9rem;">Map</code> object with stream processing to handle files exceeding 100MB without crashing.</p>
-
-            <h3 style="margin-top:32px; margin-bottom:16px; font-size:1.3rem; color:var(--text-primary);">🛠️ Tech Stack</h3>
-
-            <p>
-                <strong>Frontend:</strong> HTML5, CSS3 (custom properties, glassmorphism, responsive grid), Vanilla JavaScript<br>
-                <strong>Visualization:</strong> Chart.js for interactive bar and doughnut charts<br>
-                <strong>Backend Logic:</strong> C programs for naive and hashing algorithms (compiled locally)<br>
-                <strong>Streaming:</strong> File API with <code style="background:var(--bg-input);padding:2px 8px;border-radius:6px;font-family:var(--font-mono);font-size:0.9rem;">Blob.stream()</code> and <code style="background:var(--bg-input);padding:2px 8px;border-radius:6px;font-family:var(--font-mono);font-size:0.9rem;">TextDecoder</code> for chunk-by-chunk processing of large files
-            </p>
-
-            <h3 style="margin-top:32px; margin-bottom:16px; font-size:1.3rem; color:var(--text-primary);">📖 How It Works</h3>
-
-            <p>Upload any <code style="background:var(--bg-input);padding:2px 8px;border-radius:6px;font-family:var(--font-mono);font-size:0.9rem;">.txt</code> or <code style="background:var(--bg-input);padding:2px 8px;border-radius:6px;font-family:var(--font-mono);font-size:0.9rem;">.csv</code> file, or paste raw text directly into the input box. The app will parse every word, count its frequency, and display the results as interactive charts, a ranked table, and a top-5 highlight grid. You can toggle between the three algorithms to compare their simulated execution times and understand the impact of choosing the right data structure.</p>
-
-            <p style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-muted);font-size:0.95rem;">
-                Built as a 4th Semester Engineering Lab project for Data Structures &amp; Algorithms.
-            </p>
+            <p class="about-footer-text">Built as a 4th Semester Engineering Lab project for Design Analysis &amp; Algorithms.</p>
         </div>
     </main>
 
     <!-- ───── FOOTER ───── -->
     <footer id="app-footer">
         <div class="footer-inner">
-            <p>&copy; 2026 Word Frequency Analyzer &mdash; Data Structures &amp; Algorithms Project</p>
+            <p>&copy; 2026 Word Frequency Analyzer &mdash; Design Analysis &amp; Algorithms Project</p>
             <p class="footer-sub">Built with HTML, CSS, JavaScript &amp; Chart.js</p>
         </div>
     </footer>

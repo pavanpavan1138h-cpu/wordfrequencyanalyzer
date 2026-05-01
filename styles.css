@@ -5,9 +5,9 @@
 /* ── CSS Custom Properties ── */
 :root,
 [data-theme="dark"] {
-    --bg-base:       #030712;
-    --bg-primary:    #0b0f1a;
-    --bg-secondary:  #111827;
+    --bg-base:       #020617; /* Dark slate */
+    --bg-primary:    #0f172a;
+    --bg-secondary:  #1e293b;
     --bg-card:       rgba(17, 24, 39, 0.7);
     --bg-card-solid: #111827;
     --bg-glass:      rgba(17, 24, 39, 0.65);
@@ -130,10 +130,10 @@ body {
     filter: blur(80px);
 }
 
-.bg-orb-1 { width: 40vw; height: 40vw; background: rgba(99,102,241,0.3); top: -10%; left: -10%; animation-delay: 0s; }
-.bg-orb-2 { width: 35vw; height: 35vw; background: rgba(167,139,250,0.25); bottom: -10%; right: -5%; animation-delay: -5s; }
-.bg-orb-3 { width: 30vw; height: 30vw; background: rgba(232,121,249,0.2); top: 40%; left: 60%; animation-delay: -10s; }
-.bg-orb-4 { width: 25vw; height: 25vw; background: rgba(96,165,250,0.2); bottom: 20%; left: 10%; animation-delay: -15s; }
+.bg-orb-1 { width: 40vw; height: 40vw; background: rgba(14, 165, 233, 0.12); top: -10%; left: -10%; animation-delay: 0s; }
+.bg-orb-2 { width: 35vw; height: 35vw; background: rgba(99, 102, 241, 0.12); bottom: -10%; right: -5%; animation-delay: -5s; }
+.bg-orb-3 { width: 30vw; height: 30vw; background: rgba(16, 185, 129, 0.08); top: 40%; left: 60%; animation-delay: -10s; }
+.bg-orb-4 { width: 25vw; height: 25vw; background: rgba(139, 92, 246, 0.12); bottom: 20%; left: 10%; animation-delay: -15s; }
 
 @keyframes orbMove {
     0%   { transform: translate(0, 0) scale(1); }
@@ -414,38 +414,226 @@ body {
     flex-wrap: wrap;
 }
 
-/* ── PAGE ABOUT: About Us ── */
+/* ── HOME PAGE ROADMAP ── */
+.roadmap-section {
+    width: 100%;
+    max-width: 1000px;
+    margin: 60px auto 0;
+    padding: 0 24px;
+    animation: fadeUp 0.6s ease-out 0.2s both;
+}
+
+.roadmap-title {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 48px;
+    color: var(--text-primary);
+}
+
+.roadmap-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    position: relative;
+}
+
+.roadmap-step {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 24px;
+    text-align: center;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition);
+}
+
+.roadmap-step:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-lg);
+}
+
+.step-number {
+    width: 48px;
+    height: 48px;
+    background: var(--gradient-hero);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 0 auto 20px;
+    box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+}
+
+.step-content h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.step-content p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+    .roadmap-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 600px) {
+    .roadmap-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── PAGE ABOUT: About Us (Postcards) ── */
 #page-about {
     padding: 120px 24px 80px;
     display: flex;
     justify-content: center;
 }
 
-.about-card {
-    background: var(--bg-card);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xl);
-    padding: 48px;
-    max-width: 800px;
+.about-container {
+    max-width: 1000px;
     width: 100%;
-    box-shadow: var(--shadow-lg);
-    animation: fadeUp 0.6s ease-out;
 }
 
-.about-card h2 {
-    font-size: 2.5rem;
+.about-header {
+    text-align: center;
+    margin-bottom: 60px;
+    animation: fadeDown 0.6s ease-out;
+}
+
+.about-header h2 {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 900;
+    margin-bottom: 16px;
+}
+
+.about-subtitle {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+.postcards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    animation: fadeUp 0.6s ease-out 0.2s both;
+}
+
+.postcard {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 40px 32px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.postcard::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.postcard:hover {
+    transform: translateY(-10px) rotate(1deg);
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-lg);
+}
+
+.postcard-icon {
+    font-size: 2.5rem;
     margin-bottom: 24px;
+    display: inline-block;
+}
+
+.postcard h3 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 12px;
     color: var(--text-primary);
 }
 
-.about-card p {
-    font-size: 1.1rem;
+.postcard-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    background: var(--bg-input);
+    color: var(--accent-light);
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+}
+
+[data-theme="light"] .postcard-badge { color: var(--accent-dark); }
+
+.postcard p {
+    font-size: 1rem;
     color: var(--text-secondary);
-    margin-bottom: 20px;
-    line-height: 1.7;
+    line-height: 1.6;
+}
+
+.postcard-wide {
+    grid-column: span 3;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 32px 48px;
+}
+
+.postcard-wide .postcard-icon {
+    margin-bottom: 0;
+    font-size: 3.5rem;
+}
+
+.postcard-wide .postcard-content {
+    flex: 1;
+}
+
+@media (max-width: 900px) {
+    .postcards-grid {
+        grid-template-columns: 1fr;
+    }
+    .postcard-wide {
+        grid-column: span 1;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        padding: 40px 32px;
+    }
+    .postcard-wide .postcard-icon {
+        margin-bottom: 24px;
+    }
+}
+
+.about-footer-text {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.95rem;
 }
 
 
