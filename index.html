@@ -493,15 +493,15 @@
                 <div class="postcard">
                     <div class="postcard-icon">📖</div>
                     <h3>3. Dictionary Method</h3>
-                    <div class="postcard-badge">Time: O(n) avg</div>
-                    <p>Uses a key-value associative array mapping words directly to counts. It achieves O(1) average-case lookups using JavaScript's native Map object.</p>
+                    <div class="postcard-badge">Time: O(w) avg</div>
+                    <p>Implemented natively in C using a <strong>Trie (Prefix Tree)</strong> data structure. Each node represents a character, allowing for extremely fast O(w) lookups and insertions where w is the word length.</p>
                 </div>
 
                 <div class="postcard postcard-wide">
                     <div class="postcard-icon">⚙️</div>
                     <div class="postcard-content">
                         <h3>System Architecture &amp; Data Flow</h3>
-                        <p>Engineered for high-throughput text ingestion, our architecture leverages <strong>JavaScript Streams</strong> and the native <strong>File API</strong> for non-blocking file processing. Raw data flows into a dynamic in-memory buffer, undergoes sanitization via regex-driven parsers, and is seamlessly routed to the selected algorithmic core. The resulting metrics are instantaneously rendered through an interactive visualization pipeline.</p>
+                        <p>Engineered for high-throughput text ingestion, our architecture features a decoupled client-server model. The frontend UI uploads text payloads via REST API to a <strong>zero-dependency Node.js backend</strong>. The Node server safely writes the data to disk and concurrently spawns isolated <code>child_process</code> instances of the compiled C binaries. The C binaries execute the algorithms natively at the OS level, and the Node server parses the <code>stdout</code> to deliver real-time metrics back to the interactive visualization pipeline.</p>
                     </div>
                 </div>
 
@@ -509,7 +509,7 @@
                     <div class="postcard-icon">🛠️</div>
                     <div class="postcard-content">
                         <h3>Tech Stack &amp; Processing</h3>
-                        <p>Built with <strong>HTML5, CSS3, and Vanilla JS</strong>. Uses <strong>Chart.js</strong> for visualizations and the native <strong>File API &amp; Streams</strong> for chunk-by-chunk processing to effortlessly handle files exceeding 100MB.</p>
+                        <p><strong>Backend:</strong> Pure C (GCC compiled binaries) for algorithmic heavy lifting, orchestrated by a zero-dependency <strong>Node.js HTTP Server</strong>.<br><strong>Frontend:</strong> Built with HTML5, CSS3, Vanilla JS, and Chart.js for beautiful, responsive data visualization.</p>
                     </div>
                 </div>
             </div>
