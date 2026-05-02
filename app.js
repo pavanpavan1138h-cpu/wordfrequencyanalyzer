@@ -318,117 +318,50 @@
     /* ─────────────────────────────────────────────────────
        Simulated Algorithms & Chunk Streaming
        ───────────────────────────────────────────────────── */
-    async function streamProcessFile(file, format) {
-        const stream = file.stream();
-        const reader = stream.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let leftover = '';
-        const map = new Map();
-
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            
-            const chunk = leftover + decoder.decode(value, { stream: true });
-            
-            if (format === 'csv') {
-                const lines = chunk.split('\n');
-                leftover = lines.pop(); // keep last partial line
-                for (let line of lines) {
-                    const parts = line.split(',');
-                    if (parts.length >= 2) {
-                        const word = parts[0].trim().toLowerCase();
-                        const count = parseInt(parts[1].trim(), 10);
-                        if (word && !isNaN(count)) {
-                            map.set(word, (map.get(word) || 0) + count);
-                        }
-                    }
-                }
-            } else {
-                const words = chunk.toLowerCase().split(/[^a-z0-9]+/);
-                leftover = words.pop() || ''; // keep last partial word
-                for (let w of words) {
-                    if (w) map.set(w, (map.get(w) || 0) + 1);
-                }
-            }
-        }
-        
-        // Process final leftover
-        if (leftover) {
-            if (format === 'csv') {
-                const parts = leftover.split(',');
-                if (parts.length >= 2) {
-                    const word = parts[0].trim().toLowerCase();
-                    const count = parseInt(parts[1].trim(), 10);
-                    if (word && !isNaN(count)) {
-                        map.set(word, (map.get(word) || 0) + count);
-                    }
-                }
-            } else {
-                const word = leftover.toLowerCase().replace(/[^a-z0-9]+/g, '');
-                if (word) map.set(word, (map.get(word) || 0) + 1);
-            }
-        }
-        
-        return map;
-    }
-
-    function processTextImmediate(text, format) {
-        const map = new Map();
-        if (format === 'csv') {
-            text.split('\n').forEach(line => {
-                const parts = line.split(',');
-                if (parts.length >= 2) {
-                    const w = parts[0].trim().toLowerCase();
-                    const c = parseInt(parts[1], 10);
-                    if (w && !isNaN(c)) map.set(w, (map.get(w) || 0) + c);
-                }
-            });
-        } else {
-            const words = text.toLowerCase().match(/[a-z0-9]+/g) || [];
-            words.forEach(w => {
-                if (w) map.set(w, (map.get(w) || 0) + 1);
-            });
-        }
-        return map;
-    }
-
-    // Process data and simulate algorithm times based on complexity
+    // Process data using the C backend
     async function processData() {
-        const format = getSelectedFormat();
         const isPaste = dom.tabPaste.classList.contains('active');
         
-        let uniqueMap;
+        let textToSend = '';
         if (isPaste) {
-            uniqueMap = processTextImmediate(dom.textInput.value, format);
-        } else {
-            uniqueMap = await streamProcessFile(state.activeFile, format);
+            textToSend = dom.textInput.value;
+        } else if (state.activeFile) {
+            textToSend = await state.activeFile.text();
         }
 
-        // The "ground truth" data array
-        const finalData = Array.from(uniqueMap.entries())
-            .map(([word, count]) => ({ word, count }))
-            .sort((a, b) => b.count - a.count);
+        try {
+            const response = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: textToSend
+            });
+            
+            if (!response.ok) {
+                throw new Error('Backend responded with status ' + response.status);
+            }
+            
+            const backendResults = await response.json();
+            if (backendResults.error) {
+                throw new Error(backendResults.error);
+            }
 
-        // Estimate N (total raw words)
-        const n = finalData.reduce((sum, d) => sum + d.count, 0) || 1;
+            // Save results from backend
+            state.results = {
+                naive: backendResults.naive || { data: [], time: '0.00' },
+                hashing: backendResults.hashing || { data: [], time: '0.00' },
+                dictionary: backendResults.dictionary || { data: [], time: '0.00' }
+            };
 
-        // Simulate calculation times based on Big O
-        let naiveTime = (n * n) / 500000; 
-        if (naiveTime < 1) naiveTime = Math.random() * 2 + 1;
-
-        let hashTime = n / 10000;
-        if (hashTime < 0.1) hashTime = Math.random() * 0.5 + 0.1;
-
-        let dictTime = n / 15000;
-        if (dictTime < 0.05) dictTime = Math.random() * 0.2 + 0.05;
-
-        // Save results
-        state.results = {
-            naive:      { data: finalData, time: naiveTime.toFixed(2) },
-            hashing:    { data: finalData, time: hashTime.toFixed(2) },
-            dictionary: { data: finalData, time: dictTime.toFixed(2) }
-        };
+        } catch (err) {
+            console.error("Error calling C backend:", err);
+            alert("Failed to process data via backend. Is the server running?");
+            // Fallback empty state
+            state.results = {
+                naive: { data: [], time: '0.00' },
+                hashing: { data: [], time: '0.00' },
+                dictionary: { data: [], time: '0.00' }
+            };
+        }
     }
 
     function startAnalysis() {

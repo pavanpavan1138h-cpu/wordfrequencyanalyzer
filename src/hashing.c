@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
-#define SIZE 1000
+#define SIZE 20000
 
 typedef struct Node {
-    char word[50];
+    char word[100];
     int count;
     struct Node* next;
 } Node;
@@ -13,11 +14,23 @@ typedef struct Node {
 Node* table[SIZE] = {NULL};
 
 int hash(char *word) {
-    int sum = 0;
-    for(int i = 0; word[i] != '\0'; i++) {
-        sum += word[i];
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *word++)) {
+        hash = ((hash << 5) + hash) + c; // djb2 hash
     }
-    return sum % SIZE;
+    return hash % SIZE;
+}
+
+void clean_word(char *str) {
+    int i = 0, j = 0;
+    while (str[i]) {
+        if (isalnum((unsigned char)str[i])) {
+            str[j++] = tolower((unsigned char)str[i]);
+        }
+        i++;
+    }
+    str[j] = '\0';
 }
 
 void insert(char *word) {
@@ -39,47 +52,38 @@ void insert(char *word) {
     table[index] = newNode;
 }
 
-void processFile() {
-    FILE *fp = fopen("input/input.txt", "r");
-    char word[50];
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: %s <input_file>\n", argv[0]);
+        return 1;
+    }
+
+    FILE *fp = fopen(argv[1], "r");
+    char temp[100];
 
     if (fp == NULL) {
         printf("Error opening file\n");
-        return;
+        return 1;
     }
 
-    while (fscanf(fp, "%s", word) != EOF) {
-        insert(word);
-    }
-
-    fclose(fp);
-}
-
-void display() {
-    printf("Word Frequencies (Hashing):\n");
-
-    for (int i = 0; i < SIZE; i++) {
-        Node *temp = table[i];
-        while (temp != NULL) {
-            printf("%s -> %d\n", temp->word, temp->count);
-            temp = temp->next;
+    while (fscanf(fp, "%99s", temp) != EOF) {
+        clean_word(temp);
+        if (strlen(temp) > 0) {
+            insert(temp);
         }
     }
-    FILE *out = fopen("output/data.txt", "w");
+    fclose(fp);
 
-for (int i = 0; i < SIZE; i++) {
-    Node *temp = table[i];
-    while (temp != NULL) {
-        fprintf(out, "%s,%d\n", temp->word, temp->count);
-        temp = temp->next;
+    // Print to stdout in CSV format for Node backend
+    for (int i = 0; i < SIZE; i++) {
+        Node *curr = table[i];
+        while (curr != NULL) {
+            printf("%s,%d\n", curr->word, curr->count);
+            Node *to_free = curr;
+            curr = curr->next;
+            free(to_free);
+        }
     }
-}
 
-fclose(out);
-}
-
-int main() {
-    processFile();
-    display();
     return 0;
 }

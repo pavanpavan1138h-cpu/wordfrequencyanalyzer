@@ -1,3 +1,0 @@
-mango,1
-apple,3
-banana,2
